@@ -4,6 +4,7 @@ import ffmpeg
 import argparse
 import mimetypes
 import multiprocessing  # For parallel processing
+from tqdm import tqdm  # Added for progress reporting
 
 def get_video_duration(video_path):
     """Gets the duration of a video in minutes using ffmpeg."""
@@ -81,8 +82,11 @@ def scan_folder(folder, depth=2):
                     video_file_names.append(file)
 
             if video_file_paths:
-                # Obtain video durations in parallel
-                durations = pool.map(get_video_duration, video_file_paths)
+                # Obtain video durations in parallel with progress indicator
+                durations = list(tqdm(pool.imap(get_video_duration, video_file_paths),
+                                        total=len(video_file_paths),
+                                        desc=f"Processing videos in {relative_path}",
+                                        unit="video"))
                 for file_name, duration in zip(video_file_names, durations):
                     size_bytes = get_file_size(Path(root) / file_name)
                     folder_duration += duration
