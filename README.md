@@ -34,9 +34,15 @@ To use **video-reporter-cli**, you need **FFmpeg** and **Python 3** installed on
      brew install ffmpeg
      ```
 
+   - On **Windows (using Chocolatey)**:  
+     ```powershell
+     choco install ffmpeg
+     ```
+
    - On **Windows**:  
      1. Download FFmpeg from the [official website](https://ffmpeg.org/download.html).
      2. Extract the zip file and add the bin folder to your system's PATH variable.
+
 
 2. **Install Python 3:**
 
