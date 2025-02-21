@@ -1,12 +1,17 @@
 
-### 📌 **video-reporter-cli - is a command-line tool that scans a directory and generates a detailed report of video file durations.**
+# 📌 About the Project  
+
+This project is an advanced video analysis tool that extracts key information from multimedia files efficiently. Its modular and optimized design makes it ideal for processing large volumes of videos, leveraging parallelization techniques to improve performance. 
 
 **It utilizes **FFmpeg** to accurately extract media durations and supports various formats such as MP4, MKV, AVI, MOV, MPG, MP3, and more.**  
 
 ## 🚀 **Features** 
-✅ Recursively scans directories up to a configurable depth  
-✅ Supports common video and audio formats  
-✅ Uses **FFmpeg** for accurate duration extraction  
+✅ **Recursively scans directories** – Up to a configurable depth  
+✅ **Video Duration Extraction** – Retrieves the exact duration of each analyzed video using FFmpeg.  
+✅ **Parallel Processing with `multiprocessing`** – Speeds up the processing of multiple files in parallel, optimizing performance for large video batches.  
+✅ **Support for Common Formats** – Compatible with MP4, AVI, MKV, and other widely used video formats.  
+✅ **Efficiency & Scalability** – Optimized implementation to handle large amounts of videos without affecting system performance.  
+✅ **Result Logging** – Exports analysis results in a readable format for further reporting or integration with other applications.  
 
 This tool is ideal for content creators, video archivists, and developers who need a quick overview of media durations in large collections. 🚀
 
@@ -51,5 +56,28 @@ To use **video-reporter-cli**, you need **FFmpeg** and **Python 3** installed on
    - On **Windows**:  
      Download Python 3 from the [official website](https://www.python.org/downloads/), and ensure you check "Add Python to PATH" during installation.
 
-## 🔹 **Supported Python Versions:**
-- Python **3.6** or higher.
+## 📦 Installation  
+
+1. Clone this repository:  
+   ```bash
+   git clone https://github.com/reiarseni/video-reporter-cli.git
+   cd video-reporter-cli
+   ```  
+2. Install dependencies:  
+   ```bash
+   pip install -r requirements.txt
+   ```  
+3. Run the analysis on a folder of videos:  
+   ```bash
+   python video_reporter.py /path/to/videos
+   or with full options
+   python video_reporter.py /path/to/videos --output --depth 2
+   ```  
+
+## 👨‍💻 Contributing  
+
+Contributions are welcome! If you find a bug or want to improve the code, feel free to open an **Issue** or submit a **Pull Request**.  
+
+## ⚖️ License  
+
+This project is licensed under the **MIT License**, meaning you can use, modify, and distribute it freely.  
