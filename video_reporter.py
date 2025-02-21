@@ -14,8 +14,23 @@ def get_video_duration(video_path):
         print(f"Error processing {video_path}: {e}")
         return 0
 
+def get_file_size_in_bytes(file_path):
+    """Returns the file size in bytes."""
+    return os.path.getsize(file_path)
+
+def format_size(size_in_bytes):
+    """Converts size in bytes to a human-readable format (KB, MB, GB)."""
+    if size_in_bytes < 1024:
+        return f"{size_in_bytes} B"
+    elif size_in_bytes < 1048576:
+        return f"{size_in_bytes / 1024:.2f} KB"
+    elif size_in_bytes < 1073741824:
+        return f"{size_in_bytes / 1048576:.2f} MB"
+    else:
+        return f"{size_in_bytes / 1073741824:.2f} GB"
+
 def scan_folder(folder, depth=2):
-    """Scans the folder up to a specific depth and calculates the duration of the videos."""
+    """Scans the folder up to a specific depth and calculates the duration and size of the videos."""
     folder = Path(folder)
     if not folder.is_dir():
         print(f"The path {folder} is not a valid folder.")
@@ -23,6 +38,7 @@ def scan_folder(folder, depth=2):
 
     report = []
     total_duration = 0
+    total_size = 0
 
     # Sort folders and files for ordered output
     for root, dirs, files in sorted(os.walk(folder)):
@@ -33,26 +49,31 @@ def scan_folder(folder, depth=2):
             continue
 
         folder_duration = 0
+        folder_size = 0
         folder_report = []
 
         for file in sorted(files):
             file_path = Path(root) / file
             if file_path.suffix.lower() in [".mp4", ".mkv", ".avi", ".mov", ".mpg", ".mp3"]:
                 duration = get_video_duration(str(file_path))
+                size_in_bytes = get_file_size_in_bytes(file_path)
                 folder_duration += duration
-                folder_report.append(f"    {file} ({duration:.2f} minutes)")
+                folder_size += size_in_bytes
+                folder_report.append(f"    {file} ({duration:.2f} minutes, {format_size(size_in_bytes)})")
 
         if folder_report:
             report.append(f"{relative_path}/")
             report.extend(folder_report)
-            report.append(f"  Total duration in folder: {folder_duration:.2f} minutes\n")
+            report.append(f"  Total duration in folder: {folder_duration:.2f} minutes, Total size: {format_size(folder_size)}\n")
         total_duration += folder_duration
+        total_size += folder_size
 
-    report.append(f"Total duration of all videos: {total_duration:.2f} minutes\n")
+    report.append(f"Total duration of all videos: {total_duration:.2f} minutes")
+    report.append(f"Total size of all videos: {format_size(total_size)}\n")
     return "\n".join(report)
 
 def main():
-    parser = argparse.ArgumentParser(description="Scans a folder and calculates the duration of the videos.")
+    parser = argparse.ArgumentParser(description="Scans a folder and calculates the duration and size of the videos.")
     parser.add_argument("folder", type=str, help="Path of the folder to scan")
     parser.add_argument("--depth", type=int, default=2, help="Maximum depth to scan (default is 2)")
     args = parser.parse_args()
@@ -63,7 +84,7 @@ def main():
     report = scan_folder(folder_to_scan, depth)
 
     if report:
-        print("\n=== Video Duration Report ===\n")
+        print("\n=== Video Duration and Size Report ===\n")
         print(report)
 
 if __name__ == "__main__":
