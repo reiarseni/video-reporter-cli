@@ -37,7 +37,10 @@ def format_size(size_bytes):
 def is_video_file(file_path):
     """Checks if the file is a video by MIME type."""
     mime_type, _ = mimetypes.guess_type(file_path)
-    return mime_type and mime_type.startswith('video')
+    if mime_type:
+        if mime_type.startswith('video') or mime_type.startswith('audio'):
+            return True
+    return False
 
 def scan_folder(folder, depth=2):
     """Scans the folder up to a specific depth and calculates the duration and size of the videos."""
