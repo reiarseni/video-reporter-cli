@@ -1,5 +1,7 @@
 
-## 📌 **video-reporter-cli - is a command-line tool that scans a directory and generates a detailed report of video file durations. It utilizes **FFmpeg** to accurately extract media durations and supports various formats such as MP4, MKV, AVI, MOV, MPG, MP3, and more.**  
+### 📌 **video-reporter-cli - is a command-line tool that scans a directory and generates a detailed report of video file durations.**
+
+**It utilizes **FFmpeg** to accurately extract media durations and supports various formats such as MP4, MKV, AVI, MOV, MPG, MP3, and more.**  
 
 ## 🚀 **Features** 
 ✅ Recursively scans directories up to a configurable depth  
