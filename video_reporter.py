@@ -42,6 +42,21 @@ def is_video_file(file_path):
     if mime_type:
         if mime_type.startswith('video') or mime_type.startswith('audio'):
             return True
+
+    # Si el MIME type es inconcluso, comprobar por extensión
+    extension = Path(file_path).suffix.lower()
+    VIDEO_EXTENSIONS = {
+        '.3gp', '.3g2', '.avi', '.flv', '.m4v', '.mkv', '.mov', '.mp4',
+        '.mpeg', '.mpg', '.mts', '.vob', '.wmv', '.asf', '.m2ts',
+        '.divx', '.xvid', '.rmvb', '.f4v', '.mxf', '.webm'
+    }
+    AUDIO_EXTENSIONS = {
+        '.aac', '.aiff', '.ape', '.flac', '.m4a', '.mp3', '.ogg',
+        '.opus', '.wav', '.wma', '.amr'
+    }
+    if extension in VIDEO_EXTENSIONS or extension in AUDIO_EXTENSIONS:
+        return True
+
     return False
 
 def scan_folder(folder, depth=2):
@@ -88,6 +103,8 @@ def scan_folder(folder, depth=2):
                                         desc=f"Processing videos in {relative_path}",
                                         unit="video"))
                 for file_name, duration in zip(video_file_names, durations):
+                    if duration == 0:
+                        continue
                     size_bytes = get_file_size(Path(root) / file_name)
                     folder_duration += duration
                     folder_size += size_bytes
