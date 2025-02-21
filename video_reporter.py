@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import ffmpeg
 import argparse
+import mimetypes
 
 def get_video_duration(video_path):
     """Gets the duration of a video in minutes using ffmpeg."""
@@ -33,6 +34,11 @@ def format_size(size_bytes):
     else:
         return f"{size_bytes / (1024 * 1024 * 1024):.2f} GB"
 
+def is_video_file(file_path):
+    """Checks if the file is a video by MIME type."""
+    mime_type, _ = mimetypes.guess_type(file_path)
+    return mime_type and mime_type.startswith('video')
+
 def scan_folder(folder, depth=2):
     """Scans the folder up to a specific depth and calculates the duration and size of the videos."""
     folder = Path(folder)
@@ -58,17 +64,12 @@ def scan_folder(folder, depth=2):
 
         for file in sorted(files):
             file_path = Path(root) / file
-            if file_path.suffix.lower() in [".mp4", ".mkv", ".avi", ".mov", ".mpg", ".mp3"]:
-                # Handle possible errors with video duration and file size
-                try:
-                    duration = get_video_duration(str(file_path))
-                    size_in_bytes = get_file_size_in_bytes(file_path)
-                    folder_duration += duration
-                    folder_size += size_in_bytes
-                    folder_report.append(f"    {file} ({duration:.2f} minutes, {format_size(size_in_bytes)})")
-                except Exception as e:
-                    print(f"Error processing file {file_path}: {e}")
-                    continue
+            if is_video_file(file_path):  # Check if the file is a video
+                duration = get_video_duration(str(file_path))
+                size_bytes = get_file_size(file_path)
+                folder_duration += duration
+                folder_size += size_bytes
+                folder_report.append(f"    {file} ({duration:.2f} minutes, {format_size(size_bytes)})")
 
         if folder_report:
             report.append(f"{relative_path}/")
