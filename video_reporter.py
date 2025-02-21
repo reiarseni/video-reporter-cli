@@ -3,6 +3,7 @@ from pathlib import Path
 import ffmpeg
 import argparse
 import mimetypes
+import multiprocessing  # Se importa para la paralelización
 
 def get_video_duration(video_path):
     """Gets the duration of a video in minutes using ffmpeg."""
@@ -53,33 +54,44 @@ def scan_folder(folder, depth=2):
     total_duration = 0
     total_size = 0
 
-    # Sort folders and files for ordered output
-    for root, dirs, files in sorted(os.walk(folder)):
-        relative_path = Path(root).relative_to(folder)
-        current_depth = len(relative_path.parts)
+    # Se crea un pool para paralelizar el cálculo de duración de videos
+    with multiprocessing.Pool() as pool:
+        # Sort folders and files for ordered output
+        for root, dirs, files in sorted(os.walk(folder)):
+            relative_path = Path(root).relative_to(folder)
+            current_depth = len(relative_path.parts)
 
-        if current_depth > depth:
-            continue
+            if current_depth > depth:
+                continue
 
-        folder_duration = 0
-        folder_size = 0
-        folder_report = []
+            folder_duration = 0
+            folder_size = 0
+            folder_report = []
 
-        for file in sorted(files):
-            file_path = Path(root) / file
-            if is_video_file(file_path):  # Check if the file is a video
-                duration = get_video_duration(str(file_path))
-                size_bytes = get_file_size(file_path)
-                folder_duration += duration
-                folder_size += size_bytes
-                folder_report.append(f"    {file} ({duration:.2f} minutes, {format_size(size_bytes)})")
+            video_file_paths = []
+            video_file_names = []
 
-        if folder_report:
-            report.append(f"{relative_path}/")
-            report.extend(folder_report)
-            report.append(f"  Total duration in folder: {folder_duration:.2f} minutes, Total size: {format_size(folder_size)}\n")
-        total_duration += folder_duration
-        total_size += folder_size
+            for file in sorted(files):
+                file_path = Path(root) / file
+                if is_video_file(file_path):  # Check if the file is a video
+                    video_file_paths.append(str(file_path))
+                    video_file_names.append(file)
+
+            if video_file_paths:
+                # Se obtienen las duraciones en paralelo
+                durations = pool.map(get_video_duration, video_file_paths)
+                for file_name, duration in zip(video_file_names, durations):
+                    size_bytes = get_file_size(Path(root) / file_name)
+                    folder_duration += duration
+                    folder_size += size_bytes
+                    folder_report.append(f"    {file_name} ({duration:.2f} minutes, {format_size(size_bytes)})")
+
+            if folder_report:
+                report.append(f"{relative_path}/")
+                report.extend(folder_report)
+                report.append(f"  Total duration in folder: {folder_duration:.2f} minutes, Total size: {format_size(folder_size)}\n")
+            total_duration += folder_duration
+            total_size += folder_size
 
     report.append(f"Total duration of all videos: {total_duration:.2f} minutes")
     report.append(f"Total size of all videos: {format_size(total_size)}\n")
