@@ -100,10 +100,36 @@ def scan_folder(folder, depth=2):
     report.append(f"Total size of all videos: {format_size(total_size)}\n")
     return "\n".join(report)
 
+def format_report_to_markdown(report_str):
+    """
+    Converts the plain text report into Markdown format.
+    Adds headers and converts items into lists.
+    """
+    lines = report_str.splitlines()
+    md_lines = ["# Video Durations and Sizes Report", ""]
+    for line in lines:
+        if line.endswith("/") and not line.startswith("    "):
+            # Header for folder
+            folder_name = line.rstrip("/")
+            md_lines.append(f"## {folder_name}/")
+        elif line.startswith("    "):
+            # File: convert to list item
+            md_lines.append(f"- {line.strip()}")
+        elif line.startswith("  Total duration in folder:"):
+            md_lines.append(f"**{line.strip()}**")
+        elif line.startswith("Total duration of all videos:") or line.startswith("Total size of all videos:"):
+            md_lines.append(f"**{line.strip()}**")
+        else:
+            md_lines.append(line)
+    return "\n".join(md_lines)
+
 def main():
     parser = argparse.ArgumentParser(description="Scans a folder and calculates the duration and size of videos.")
     parser.add_argument("folder", type=str, help="Path to the folder to scan")
-    parser.add_argument("--depth", type=int, default=2, help="Maximum depth to scan (default 2)")
+    parser.add_argument("--depth", type=int, default=2, help="Maximum depth to scan (default is 2)")
+    # Option to export the report in Markdown format
+    parser.add_argument("--output", nargs="?", const="", default=None,
+                        help="Optional output file path for Markdown report. If provided without a filename, 'resume.md' will be created in the scanned folder.")
     args = parser.parse_args()
 
     folder_to_scan = args.folder
@@ -115,7 +141,21 @@ def main():
         print("\n=== Video Durations and Sizes Report ===\n")
         print(report)
 
+        # Markdown report export
+        if args.output is not None:
+            md_report = format_report_to_markdown(report)
+            if args.output == "":
+                output_md_path = Path(folder_to_scan) / "resume.md"
+            else:
+                output_md_path = Path(args.output)
+            try:
+                with open(output_md_path, "w", encoding="utf-8") as f:
+                    f.write(md_report)
+                print(f"Markdown report saved to {output_md_path}")
+            except Exception as e:
+                print(f"Error writing Markdown report: {e}")
+
 if __name__ == "__main__":
     main()
 
-# usage: python video_reporter.py "/path/to/videos_folder" --depth 2
+# usage: python video_reporter.py "/path/to/videos_folder" --output --depth 2
