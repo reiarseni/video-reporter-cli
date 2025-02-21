@@ -1,6 +1,7 @@
-**video-reporter-cli** is a command-line tool that scans a directory and generates a detailed report of video file durations. It utilizes **FFmpeg** to accurately extract media durations and supports various formats such as MP4, MKV, AVI, MOV, MPG, MP3, and more.
 
-#### 🔹 **Features:**
+## 📌 **video-reporter-cli - is a command-line tool that scans a directory and generates a detailed report of video file durations. It utilizes **FFmpeg** to accurately extract media durations and supports various formats such as MP4, MKV, AVI, MOV, MPG, MP3, and more.**  
+
+## 🚀 **Features** 
 ✅ Recursively scans directories up to a configurable depth  
 ✅ Supports common video and audio formats  
 ✅ Uses **FFmpeg** for accurate duration extraction  
@@ -9,7 +10,7 @@ This tool is ideal for content creators, video archivists, and developers who ne
 
 ---
 
-#### 🛠 **Installation Instructions:**
+## 🛠 **Installation Instructions:**
 
 To use **video-reporter-cli**, you need **FFmpeg** and **Python 3** installed on your system.
 
@@ -48,5 +49,5 @@ To use **video-reporter-cli**, you need **FFmpeg** and **Python 3** installed on
    - On **Windows**:  
      Download Python 3 from the [official website](https://www.python.org/downloads/), and ensure you check "Add Python to PATH" during installation.
 
-#### 🔹 **Supported Python Versions:**
+## 🔹 **Supported Python Versions:**
 - Python **3.6** or higher.
