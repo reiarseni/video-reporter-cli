@@ -4,27 +4,27 @@ import ffmpeg
 import argparse
 
 def get_video_duration(video_path):
-    """Obtiene la duración de un video en minutos usando ffmpeg."""
+    """Gets the duration of a video in minutes using ffmpeg."""
     try:
         probe = ffmpeg.probe(video_path)
         duration_seconds = float(probe['format']['duration'])
         duration_minutes = duration_seconds / 60
         return duration_minutes
     except Exception as e:
-        print(f"Error procesando {video_path}: {e}")
+        print(f"Error processing {video_path}: {e}")
         return 0
 
 def scan_folder(folder, depth=2):
-    """Escanea la carpeta hasta una profundidad específica y calcula la duración de los videos."""
+    """Scans the folder up to a specific depth and calculates the duration of the videos."""
     folder = Path(folder)
     if not folder.is_dir():
-        print(f"La ruta {folder} no es una carpeta válida.")
+        print(f"The path {folder} is not a valid folder.")
         return
 
     report = []
     total_duration = 0
 
-    # Ordenar carpetas y archivos para salida ordenada
+    # Sort folders and files for ordered output
     for root, dirs, files in sorted(os.walk(folder)):
         relative_path = Path(root).relative_to(folder)
         current_depth = len(relative_path.parts)
@@ -40,21 +40,21 @@ def scan_folder(folder, depth=2):
             if file_path.suffix.lower() in [".mp4", ".mkv", ".avi", ".mov", ".mpg", ".mp3"]:
                 duration = get_video_duration(str(file_path))
                 folder_duration += duration
-                folder_report.append(f"    {file} ({duration:.2f} minutos)")
+                folder_report.append(f"    {file} ({duration:.2f} minutes)")
 
         if folder_report:
             report.append(f"{relative_path}/")
             report.extend(folder_report)
-            report.append(f"  Total duración en carpeta: {folder_duration:.2f} minutos\n")
+            report.append(f"  Total duration in folder: {folder_duration:.2f} minutes\n")
         total_duration += folder_duration
 
-    report.append(f"Duración total de todos los videos: {total_duration:.2f} minutos\n")
+    report.append(f"Total duration of all videos: {total_duration:.2f} minutes\n")
     return "\n".join(report)
 
 def main():
-    parser = argparse.ArgumentParser(description="Escanea una carpeta y calcula la duración de los videos.")
-    parser.add_argument("folder", type=str, help="Ruta de la carpeta a escanear")
-    parser.add_argument("--depth", type=int, default=2, help="Profundidad máxima para escanear (por defecto 2)")
+    parser = argparse.ArgumentParser(description="Scans a folder and calculates the duration of the videos.")
+    parser.add_argument("folder", type=str, help="Path of the folder to scan")
+    parser.add_argument("--depth", type=int, default=2, help="Maximum depth to scan (default is 2)")
     args = parser.parse_args()
 
     folder_to_scan = args.folder
@@ -63,7 +63,7 @@ def main():
     report = scan_folder(folder_to_scan, depth)
 
     if report:
-        print("\n=== Reporte de Duraciones de Videos ===\n")
+        print("\n=== Video Duration Report ===\n")
         print(report)
 
 if __name__ == "__main__":
