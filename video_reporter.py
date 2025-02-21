@@ -3,7 +3,7 @@ from pathlib import Path
 import ffmpeg
 import argparse
 import mimetypes
-import multiprocessing  # Se importa para la paralelización
+import multiprocessing  # For parallel processing
 
 def get_video_duration(video_path):
     """Gets the duration of a video in minutes using ffmpeg."""
@@ -25,7 +25,7 @@ def get_file_size(file_path):
         return 0
 
 def format_size(size_bytes):
-    """Formats the file size in KB, MB, or GB."""
+    """Formats the file size into KB, MB, or GB."""
     if size_bytes < 1024:
         return f"{size_bytes} bytes"
     elif size_bytes < 1024 * 1024:
@@ -44,7 +44,10 @@ def is_video_file(file_path):
     return False
 
 def scan_folder(folder, depth=2):
-    """Scans the folder up to a specific depth and calculates the duration and size of the videos."""
+    """
+    Scans the folder up to a specified depth and calculates the duration and size of video files.
+    Uses multiprocessing to parallelize the video duration extraction.
+    """
     folder = Path(folder)
     if not folder.is_dir():
         print(f"The path {folder} is not a valid directory.")
@@ -54,7 +57,7 @@ def scan_folder(folder, depth=2):
     total_duration = 0
     total_size = 0
 
-    # Se crea un pool para paralelizar el cálculo de duración de videos
+    # Create a pool for parallel video duration calculation
     with multiprocessing.Pool() as pool:
         # Sort folders and files for ordered output
         for root, dirs, files in sorted(os.walk(folder)):
@@ -78,7 +81,7 @@ def scan_folder(folder, depth=2):
                     video_file_names.append(file)
 
             if video_file_paths:
-                # Se obtienen las duraciones en paralelo
+                # Obtain video durations in parallel
                 durations = pool.map(get_video_duration, video_file_paths)
                 for file_name, duration in zip(video_file_names, durations):
                     size_bytes = get_file_size(Path(root) / file_name)
