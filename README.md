@@ -70,7 +70,8 @@ To use **video-reporter-cli**, you need **FFmpeg** and **Python 3** installed on
 3. Run the analysis on a folder of videos:  
    ```bash
    python video_reporter.py /path/to/videos
-   or with full options
+   
+   #or with full options
    python video_reporter.py /path/to/videos --output --depth 2
    ```  
 
