@@ -14,30 +14,30 @@ def get_video_duration(video_path):
         print(f"Error processing {video_path}: {e}")
         return 0
 
-def get_file_size_in_bytes(file_path):
-    """Returns the file size in bytes."""
+def get_file_size(file_path):
+    """Gets the file size in bytes."""
     try:
         return os.path.getsize(file_path)
     except Exception as e:
-        print(f"Error accessing file {file_path}: {e}")
+        print(f"Error getting size of {file_path}: {e}")
         return 0
 
-def format_size(size_in_bytes):
-    """Converts size in bytes to a human-readable format (KB, MB, GB)."""
-    if size_in_bytes < 1024:
-        return f"{size_in_bytes} B"
-    elif size_in_bytes < 1048576:
-        return f"{size_in_bytes / 1024:.2f} KB"
-    elif size_in_bytes < 1073741824:
-        return f"{size_in_bytes / 1048576:.2f} MB"
+def format_size(size_bytes):
+    """Formats the file size in KB, MB, or GB."""
+    if size_bytes < 1024:
+        return f"{size_bytes} bytes"
+    elif size_bytes < 1024 * 1024:
+        return f"{size_bytes / 1024:.2f} KB"
+    elif size_bytes < 1024 * 1024 * 1024:
+        return f"{size_bytes / (1024 * 1024):.2f} MB"
     else:
-        return f"{size_in_bytes / 1073741824:.2f} GB"
+        return f"{size_bytes / (1024 * 1024 * 1024):.2f} GB"
 
 def scan_folder(folder, depth=2):
     """Scans the folder up to a specific depth and calculates the duration and size of the videos."""
     folder = Path(folder)
     if not folder.is_dir():
-        print(f"The path {folder} is not a valid folder.")
+        print(f"The path {folder} is not a valid directory.")
         return
 
     report = []
@@ -82,9 +82,9 @@ def scan_folder(folder, depth=2):
     return "\n".join(report)
 
 def main():
-    parser = argparse.ArgumentParser(description="Scans a folder and calculates the duration and size of the videos.")
-    parser.add_argument("folder", type=str, help="Path of the folder to scan")
-    parser.add_argument("--depth", type=int, default=2, help="Maximum depth to scan (default is 2)")
+    parser = argparse.ArgumentParser(description="Scans a folder and calculates the duration and size of videos.")
+    parser.add_argument("folder", type=str, help="Path to the folder to scan")
+    parser.add_argument("--depth", type=int, default=2, help="Maximum depth to scan (default 2)")
     args = parser.parse_args()
 
     folder_to_scan = args.folder
@@ -93,10 +93,10 @@ def main():
     report = scan_folder(folder_to_scan, depth)
 
     if report:
-        print("\n=== Video Duration and Size Report ===\n")
+        print("\n=== Video Durations and Sizes Report ===\n")
         print(report)
 
 if __name__ == "__main__":
     main()
 
-#usage: python video_reporter.py "/path/to/videos_folder" --depth 2
+# usage: python video_reporter.py "/path/to/videos_folder" --depth 2
