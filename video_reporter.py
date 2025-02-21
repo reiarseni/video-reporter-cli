@@ -16,7 +16,11 @@ def get_video_duration(video_path):
 
 def get_file_size_in_bytes(file_path):
     """Returns the file size in bytes."""
-    return os.path.getsize(file_path)
+    try:
+        return os.path.getsize(file_path)
+    except Exception as e:
+        print(f"Error accessing file {file_path}: {e}")
+        return 0
 
 def format_size(size_in_bytes):
     """Converts size in bytes to a human-readable format (KB, MB, GB)."""
@@ -55,11 +59,16 @@ def scan_folder(folder, depth=2):
         for file in sorted(files):
             file_path = Path(root) / file
             if file_path.suffix.lower() in [".mp4", ".mkv", ".avi", ".mov", ".mpg", ".mp3"]:
-                duration = get_video_duration(str(file_path))
-                size_in_bytes = get_file_size_in_bytes(file_path)
-                folder_duration += duration
-                folder_size += size_in_bytes
-                folder_report.append(f"    {file} ({duration:.2f} minutes, {format_size(size_in_bytes)})")
+                # Handle possible errors with video duration and file size
+                try:
+                    duration = get_video_duration(str(file_path))
+                    size_in_bytes = get_file_size_in_bytes(file_path)
+                    folder_duration += duration
+                    folder_size += size_in_bytes
+                    folder_report.append(f"    {file} ({duration:.2f} minutes, {format_size(size_in_bytes)})")
+                except Exception as e:
+                    print(f"Error processing file {file_path}: {e}")
+                    continue
 
         if folder_report:
             report.append(f"{relative_path}/")
